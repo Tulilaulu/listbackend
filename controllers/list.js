@@ -1,9 +1,7 @@
 const express = require('express')
 const app = express()
-const cors = require('cors')
-const List = require('./models/list')
 
-const ListRouter = require('express').Router()
+const listRouter = require('express').Router()
 const List = require('../models/list')
   
   const formatList = (list) => {

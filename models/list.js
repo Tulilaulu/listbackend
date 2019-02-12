@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-mongoose.connect(mongoUrl)
-
 const itemSchema = new mongoose.Schema({
     name: String, 
     quantity: Number, 

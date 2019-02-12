@@ -1,6 +1,6 @@
  
   let port = 3001
-  let mongoUrl = 'url here'
+  let mongoUrl = 'mongodb://lists:<pw>@localhost:27017/lists'
   
   module.exports = {
     mongoUrl,

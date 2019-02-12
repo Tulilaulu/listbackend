@@ -1,33 +1,34 @@
+const http = require('http')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const config = require('./utils/config')
 const listRouter = require('./controllers/list')
-const listRouter = require('./utils/list')
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then( () => {
-    console.log('connected to database', process.env.MONGODB_URI)
-  })
-  .catch( err => {
-    console.log(err)
-  })
+mongoose.connect(config.mongoUrl)
+mongoose.Promise = global.Promise
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.static('build'))
-app.use(middleware.logger)
 
-app.use('/api/list', listRouter)
+app.use('/api/lists', listRouter)
 
-app.use(middleware.error)
+const server = http.createServer(app)
 
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+server.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`)
 })
+
+server.on('close', () => {
+  mongoose.connection.close()
+})
+
+module.exports = {
+  app, server
+}
 
 /*const express = require('express')
 const app = express()
@@ -109,7 +110,7 @@ app.use(cors())
     })
     /*.then(saved => {
       response.json(formatList(saved))
-    })*/
+    })
 
   })
   

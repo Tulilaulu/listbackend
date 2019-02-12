@@ -1,46 +1,10 @@
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const mongoose = require('mongoose')
-const listRouter = require('./controllers/list')
-const listRouter = require('./utils/list')
-
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then( () => {
-    console.log('connected to database', process.env.MONGODB_URI)
-  })
-  .catch( err => {
-    console.log(err)
-  })
-
-app.use(cors())
-app.use(bodyParser.json())
-app.use(express.static('build'))
-app.use(middleware.logger)
-
-app.use('/api/list', listRouter)
-
-app.use(middleware.error)
-
-const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
-
-/*const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const List = require('./models/list')
 
-
-app.use(cors())
-  
-  app.get('/api', (req, res) => {
-    res.send('')
-  })
+const ListRouter = require('express').Router()
+const List = require('../models/list')
   
   const formatList = (list) => {
     return {
@@ -52,7 +16,7 @@ app.use(cors())
     }
   }
   
-  app.get('/api/lists', (request, response) => {
+  listRouter.get('', (request, response) => {
     List
       .find({})
       .then(lists => {
@@ -60,7 +24,7 @@ app.use(cors())
       })
   })
   
-  app.get('/api/lists/:id', (request, response) => {
+  listRouter.get('/:id', (request, response) => {
     List
     .findById(request.params.id)
     .then(list => {
@@ -76,7 +40,7 @@ app.use(cors())
       })
   }) 
 
-  app.delete('/api/lists/:id', (request, response) => {
+  listRouter.delete('/:id', (request, response) => {
     List
         .findByIdAndRemove(request.params.id)
         .then(result => {
@@ -87,7 +51,7 @@ app.use(cors())
         })
   })
 
-  app.post('/api/lists', (request, response) => {
+  listRouter.post('', (request, response) => {
     const body = request.body
 
     if (body.name === undefined && body.items === undefined) {
@@ -132,9 +96,5 @@ app.use(cors())
         response.status(400).send({ error: 'malformatted id' })
       })
   })
-  
 
-  const PORT = 3001
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })*/
+module.exports = listRouter

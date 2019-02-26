@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const itemSchema = new mongoose.Schema({
     name: String, 
-    quantity: Number, 
+    quantity: String, 
     notes: String 
 })
 
@@ -14,6 +14,17 @@ const listSchema = new mongoose.Schema({
     listed: Boolean,
     items: [ itemSchema ]
 })
+
+  
+listSchema.statics.format = (list) => {
+    return {
+      name: list.name,
+      date: list.date,
+      listed: list.listed,
+      id: list._id,
+      items: list.items
+    }
+  }
 
 const List = mongoose.model('List', listSchema);
 

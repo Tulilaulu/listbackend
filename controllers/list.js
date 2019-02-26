@@ -3,31 +3,38 @@ const app = express()
 
 const listRouter = require('express').Router()
 const List = require('../models/list')
-  
-  const formatList = (list) => {
-    return {
-      name: list.name,
-      date: list.date,
-      listed: list.listed,
-      id: list._id,
-      items: list.items
-    }
-  }
+
   
   listRouter.get('', (request, response) => {
     List
       .find({})
       .then(lists => {
-        response.json(lists.map(formatList))
+        response.json(lists.map(List.format).filter(list => list.listed))
       })
   })
   
-  listRouter.get('/:id', (request, response) => {
+  /*listRouter.get('/:id', (request, response) => {
     List
     .findById(request.params.id)
     .then(list => {
         if (list) {
-            response.json(formatList(list))
+            response.json(List.format(list))
+        } else {
+            response.status(404).end()
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        response.status(404).end()
+      })
+  }) */
+
+  listRouter.get('/:name', (request, response) => {
+    List
+    .findOne({name: request.params.name})
+    .then(list => {
+        if (list) {
+            response.json(List.format(list))
         } else {
             response.status(404).end()
         }
@@ -52,8 +59,8 @@ const List = require('../models/list')
   listRouter.post('', (request, response) => {
     const body = request.body
 
-    if (body.name === undefined && body.items === undefined) {
-        return response.status(400).json({error: 'name or items missing'})
+    if (body.name === undefined) {
+        return response.status(400).json({error: 'name missing'})
     }
 
     const list = new List({
@@ -65,29 +72,28 @@ const List = require('../models/list')
     
     list
     .save()
-    .then(formatList)
+    .then(List.format)
     .then(savedAndFormattedList => {
       response.json(savedAndFormattedList)
     })
     /*.then(saved => {
-      response.json(formatList(saved))
+      response.json(List.format(saved))
     })*/
-
   })
   
-  app.put('/api/notes/:id', (request, response) => {
+  listRouter.put('/:id', (request, response) => {
     const body = request.body
-  
+    console.log(body)
     const list = {
         name: body.name,
         listed: body.listed,
         items: body.items
     }
-  
+
     List
       .findByIdAndUpdate(request.params.id, list, { new: true } )
       .then(updated => {
-        response.json(formatList(updated))
+        response.json(List.format(updated))
       })
       .catch(error => {
         console.log(error)

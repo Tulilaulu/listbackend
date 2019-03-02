@@ -24,8 +24,21 @@ listSchema.statics.format = (list) => {
       id: list._id,
       items: list.items
     }
+}
+ /*     items: list.items.map(this.itemFormat(list.items))
+    }
   }
 
+itemSchema.statics.itemFormat = (item) => {
+    return {
+      name: item.name,
+      quantity: item.quantity,
+      notes: item.notes,
+      id: list.id,
+      editing: false //for frontend, not saved ever
+    }
+  }
+*/
 const List = mongoose.model('List', listSchema);
 
 module.exports = List
